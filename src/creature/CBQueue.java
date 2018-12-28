@@ -61,8 +61,8 @@ public class CBQueue implements CreatureQueueBehaviors {
     public void JumpOntoField(BattleField field, Formation form){
         int idx = 0;
         for (int r = 0; r < 11; r++) {
-            for (int c = 0; c < 10; c++) {
-                if (form.form[r][9-c]){
+            for (int c = 2; c < 3; c++) {
+                if (form.form[r][c+3]){
                     broQueue.get(idx).stepOn(field, r, c);
                     idx++;
                 }

@@ -11,15 +11,28 @@ public class Brick<T> {
         return Character.toString(sign);
     }
 
-    public void setSign(char sign){
-        this.sign = sign;
-    }
+//    synchronized public void setSign(char sign){ this.sign = sign; }
 
-    public void setHolder(T holder){
-        this.holder = holder;
-    }
+//    synchronized public void setHolder(T holder){ this.holder = holder; }
 
-    public T getHolder(){
+    synchronized public T getHolder(){
         return holder;
     }
+
+    synchronized public boolean setHolder(T holder, char sign) {
+        // leave
+        if (holder == null){
+            this.holder = null;
+            this.sign = '_';
+            return true;
+        }
+        // stepOn
+        if (this.holder != null)
+            return false;
+        this.holder = holder;
+        this.sign = sign;
+        return true;
+    }
+
+
 }

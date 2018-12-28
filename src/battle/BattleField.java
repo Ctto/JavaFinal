@@ -4,10 +4,10 @@ import creature.Creature;
 
 public class BattleField{
     private int row, col;
-    public Brick<Creature>[][] bricks;
+    Brick<Creature>[][] bricks;
 
     @SuppressWarnings("unchecked")
-    public BattleField(int row, int col) {
+    BattleField(int row, int col) {
         this.row = row;
         this.col = col;
         // bricks = new battle.Brick<creature.Creature>[row][col]; // er: Generic array creation
@@ -35,5 +35,19 @@ public class BattleField{
             res.append("\n");
         }
         return res.toString();
+    }
+
+    public Brick<Creature> getBrick(int row, int col){
+        if (0 <= row && row < this.row && 0 <= col && col < this.col)
+            return bricks[row][col];
+        return null;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
     }
 }

@@ -38,12 +38,15 @@ public class VillainQueue implements CreatureQueueBehaviors {
         for (int r = 0; r < 11; r++) {
             for (int c = 0; c < 10; c++) {
                 if (form.form[r][c]){
-                    vlQueue.get(idx).stepOn(field, r, c+10);
+                    vlQueue.get(idx).stepOn(field, r, c+3);
                     idx++;
                 }
             }
         }
         numOnField = idx;
+        for (int i = numOnField; i < numTotal; i++){
+            vlQueue.get(i).setLive(false);      // regarded as dead...
+        }
     }
 
     public void leaveField(BattleField field) {
@@ -51,5 +54,9 @@ public class VillainQueue implements CreatureQueueBehaviors {
             vlQueue.get(i).leave(field);
         }
         numOnField = 0;
+    }
+
+    public List<Creature> getVlQueue() {
+        return vlQueue;
     }
 }

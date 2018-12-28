@@ -6,13 +6,21 @@ import creature.Factions;
 import creature.VillainQueue;
 import tools.Sorter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static java.lang.System.exit;
+
 public class Battle {
-    private static final int fieldRowNum = 11, fieldColNum = 20;
+    private static final int fieldRowNum = 11, fieldColNum = 13;
     private static BattleField field;
     private static CBQueue cbqueue;
     private static VillainQueue vlQueue;
     private static Creature grandpa;
     private static Creature snake;
+    private static List<Creature> creatures;
 
     static {
         field = new BattleField(fieldRowNum, fieldColNum);
@@ -20,6 +28,14 @@ public class Battle {
         vlQueue = new VillainQueue(20); // with the first one as "蝎子精
         grandpa = new Creature("爷爷", Factions.JUSTICE, 'T', "./pic/grandpa.jpg");
         snake = new Creature("蛇精", Factions.EVIL, 'S', "./pic/snake.jpg");
+        creatures = new ArrayList<>();
+        creatures.add(grandpa);
+        creatures.addAll(cbqueue.getBroQueue());
+        creatures.add(snake);
+        creatures.addAll(vlQueue.getVlQueue());
+        for (Creature creature: creatures){
+            creature.setBattleInfo(field, creatures);
+        }
     }
 
     public void battlePrepare(){
@@ -35,8 +51,8 @@ public class Battle {
         System.out.println();
         cbqueue.JumpOntoField(field, Formation.HYDRA);
 
-        grandpa.stepOn(field, 9, 4);
-        snake.stepOn(field, 9, 16);
+        grandpa.stepOn(field, 9, 1);
+        snake.stepOn(field, 9, 9);
 
         System.out.println("符号说明：");
         System.out.println("葫芦娃：1-7，爷爷：T（拐杖嘛）");
@@ -77,5 +93,40 @@ public class Battle {
 
     public int getFieldColNum(){
         return fieldColNum;
+    }
+
+    public void battleBegin() {
+        ExecutorService exec = Executors.newCachedThreadPool();
+        for (Creature creature: creatures){
+            if (creature.isLive())
+                exec.execute(creature);
+        }
+        exec.shutdown();
+        while (true){
+            if (exec.isTerminated()){
+                break;
+            }
+        }
+        System.out.println("Battle end");
+//        exit(0);
+    }
+
+    public void test() {
+        for (Creature creature:creatures)
+            creature.setLive(false);
+        snake.setLive(true);
+        grandpa.setLive(true);
+        ExecutorService exec = Executors.newCachedThreadPool();
+        exec.execute(grandpa);
+        exec.execute(snake);
+        exec.shutdown();
+        while (true){
+            if (exec.isTerminated()){
+                System.out.println("end-------");
+                break;
+            }
+        }
+        System.out.println("at the end of test-------");
+        exit(0);
     }
 }

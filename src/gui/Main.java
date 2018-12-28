@@ -60,9 +60,12 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         primaryStage.setTitle("Calabash Battle!");
         primaryStage.setScene(scene);
+//        primaryStage.setResizable(false);
         primaryStage.show();
 
         showBattleField(gc);
+        battle.battleBegin();
+//        battle.test();
     }
 
     public static void main(String[] args) {
@@ -72,12 +75,16 @@ public class Main extends Application {
     private static void showBattleField(GraphicsContext gc){
         Brick<Creature>[][] bricks = battle.getBricks();
         Creature creature;
+//        Image orgimage = new Image(Main.class.getResourceAsStream("./res/background.jpg"));
         for (int r = 0; r < fieldRowNum; r++) {
             for (int c = 0; c < fieldColNum; c++) {
-                if ((creature = bricks[r][c].getHolder()) != null){
+                if ((creature = bricks[r][c].getHolder()) != null && creature.isLive()){
                     Image image = creature.getImage();
                     gc.drawImage(image, startPtX + imageSz * c, startPtY + imageSz * r, imageSz, imageSz);
                 }
+//                else {
+//                    gc.drawImage(orgimage, startPtX + imageSz * c, startPtY + imageSz * r, imageSz, imageSz);
+//                }
             }
         }
     }
