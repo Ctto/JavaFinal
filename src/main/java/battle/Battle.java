@@ -99,11 +99,11 @@ public class Battle {
                 exec.execute(creature);
         }
         exec.shutdown();
-        while (true){
-            if (exec.isTerminated()){
-                break;
-            }
-        }
+//        while (true){
+//            if (exec.isTerminated()){
+//                break;
+//            }
+//        }
         System.out.println("Battle end");
         battling = false;
 //        exit(0);
@@ -112,4 +112,8 @@ public class Battle {
     public boolean isBattling(){
         return battling;
     }
+
+    public List<Creature> getCreatures() {return creatures;}
+
+    public BattleField getField() { return field; }
 }

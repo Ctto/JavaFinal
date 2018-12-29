@@ -1,6 +1,7 @@
 package creature;
 
 import battle.*;
+import gui.UIUpdater;
 import javafx.scene.image.Image;
 
 import java.util.*;
@@ -16,19 +17,31 @@ class Position {
     }
 }
 
+class LifeState {
+    private boolean live = true;
+    synchronized void setLive(boolean live){
+        this.live = live;
+    }
+    synchronized boolean isLive(){
+        return live;
+    }
+}
+
 public class Creature implements Runnable{
     String CName;
     private Factions factions;
-    //    private int placeR, placeC;
-    private Position position;
+//    private int placeR, placeC;
+    private final Position position;
     private char sign;
     private Image image;
 
     private BattleField field;
     private int borderR, borderC;
-    private boolean live;
+    private final LifeState lifeState;
     private Creature tgEnemy;
     private List<Creature> enemyList;
+
+//    UIUpdater uiUpdater;
 
     public Creature(String CName, Factions factions, char sign, String imagePath) {
         this.CName = CName;
@@ -38,32 +51,35 @@ public class Creature implements Runnable{
         if (imagePath != null){
             image = new Image(Creature.class.getResourceAsStream(imagePath));
         }
-        live = true;
+        lifeState = new LifeState();
     }
 
     public boolean stepOn(BattleField field, int r, int c) {
-        Brick<Creature> brick = field.getBrick(r, c);
-        try {
-            if (brick.setHolder(this, sign)){
-                position.setPosition(r,c);
-                return true;
+        synchronized (this.position) {
+            Brick<Creature> brick = field.getBrick(r, c);
+            try {
+                if (brick.setHolder(this, sign)) {
+                    position.setPosition(r, c);
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (NullPointerException e) {
+                System.err.println(CName + "is stepping on brick:" + r + ", " + c + ", no such brick");
+                e.printStackTrace();
             }
-            else {
-                return false;
-            }
-        } catch (NullPointerException e){
-            System.err.println(CName + "is stepping on brick:" + r + ", " + c + ", no such brick");
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
-    public void leave(BattleField field) {
-        if (position.placeC != -1 || position.placeR != -1) {
-            Brick<Creature> brick = field.getBrick(position.placeR, position.placeC);
-            brick.setHolder(null, '_');
+    void leave(BattleField field) {
+        synchronized (this.position) {
+            if (position.placeC != -1 || position.placeR != -1) {
+                Brick<Creature> brick = field.getBrick(position.placeR, position.placeC);
+                brick.setHolder(null, '_');
+            }
+            position.setPosition(-1, -1);
         }
-        position.setPosition(-1, -1);
     }
 
     public String toString() {
@@ -75,7 +91,9 @@ public class Creature implements Runnable{
     }
 
     Position getPosition(){
-        return position;
+        synchronized (this.position) {
+            return position;
+        }
     }
 
     // for battle
@@ -104,57 +122,63 @@ public class Creature implements Runnable{
             return enemyList.get(0);
     }
 
-    synchronized void stepForward(Creature enemy) {
-//    void stepForward(Creature enemy) {
-        int orgPlaceR = position.placeR, orgPlaceC = position.placeC;
-        int r = orgPlaceR, c = orgPlaceC;
-        leave(field);
+//    synchronized void stepForward(Creature enemy) {
+    void stepForward(Creature enemy) {
+       synchronized (this.position) {
+            int orgPlaceR = position.placeR, orgPlaceC = position.placeC;
+            int r = orgPlaceR, c = orgPlaceC;
+            leave(field);
 
-        Position pos = enemy.getPosition();
-        if (pos.placeR > orgPlaceR) r = orgPlaceR + 1 < borderR ? orgPlaceR + 1: orgPlaceR;
-        else if (pos.placeR < orgPlaceR) r = orgPlaceR - 1 >= 0 ? orgPlaceR - 1:orgPlaceR;
-        else if (pos.placeC > orgPlaceC) c = orgPlaceC + 1 < borderC ? orgPlaceC + 1: orgPlaceC;
-        else if (pos.placeC < orgPlaceC) c = orgPlaceC - 1 >= 0 ? orgPlaceC - 1:orgPlaceC;
+            Position pos = enemy.getPosition();
+            if (pos.placeR > orgPlaceR) r = orgPlaceR + 1 < borderR ? orgPlaceR + 1 : orgPlaceR;
+            else if (pos.placeR < orgPlaceR) r = orgPlaceR - 1 >= 0 ? orgPlaceR - 1 : orgPlaceR;
+            else if (pos.placeC > orgPlaceC) c = orgPlaceC + 1 < borderC ? orgPlaceC + 1 : orgPlaceC;
+            else if (pos.placeC < orgPlaceC) c = orgPlaceC - 1 >= 0 ? orgPlaceC - 1 : orgPlaceC;
 
-        while (true) {
+            while (true) {
 //            System.err.println(CName+"StepForward to " + enemy);
-            if (stepOn(field, r, c))
-                return;
+                if (stepOn(field, r, c))
+                    return;
 
-            Random rd = new Random();
-            int act = rd.nextInt(5);
-            switch (act){
-                case 0: r = orgPlaceR + 1 < borderR ? orgPlaceR + 1: orgPlaceR;
-                    c = orgPlaceC;
-                    break;
-                case 1: r = orgPlaceR - 1 >= 0 ? orgPlaceR - 1:orgPlaceR;
-                    c = orgPlaceC;
-                    break;
-                case 2: c = orgPlaceC + 1 < borderC ? orgPlaceC + 1: orgPlaceC;
-                    r = orgPlaceR;
-                    break;
-                case 3: c = orgPlaceC - 1 >= 0 ? orgPlaceC - 1:orgPlaceC;
-                    r = orgPlaceR;
-                    break;
-                case 4:
-                    r = orgPlaceR;
-                    c = orgPlaceC;
-                    break;
+                Random rd = new Random();
+                int act = rd.nextInt(5);
+                switch (act) {
+                    case 0:
+                        r = orgPlaceR + 1 < borderR ? orgPlaceR + 1 : orgPlaceR;
+                        c = orgPlaceC;
+                        break;
+                    case 1:
+                        r = orgPlaceR - 1 >= 0 ? orgPlaceR - 1 : orgPlaceR;
+                        c = orgPlaceC;
+                        break;
+                    case 2:
+                        c = orgPlaceC + 1 < borderC ? orgPlaceC + 1 : orgPlaceC;
+                        r = orgPlaceR;
+                        break;
+                    case 3:
+                        c = orgPlaceC - 1 >= 0 ? orgPlaceC - 1 : orgPlaceC;
+                        r = orgPlaceR;
+                        break;
+                    case 4:
+                        r = orgPlaceR;
+                        c = orgPlaceC;
+                        break;
+                }
             }
         }
     }
 
-    synchronized public boolean isLive() {
-        return live;
+    public boolean isLive() {
+        return lifeState.isLive();
     }
 
-    synchronized void beKilled() {
-        live = false;
+    void beKilled() {
+        lifeState.setLive(false);
         System.err.print(CName + " is killed");
     }
 
-    synchronized public void setLive(boolean live) {
-        this.live = live;
+    public void setLive(boolean live) {
+        lifeState.setLive(live);
     }
 
     void checkAndAttack(){
@@ -163,7 +187,7 @@ public class Creature implements Runnable{
             for (int diffC = -1; diffC <= 1; diffC++) {
                 Brick<Creature> brick = field.getBrick(position.placeR+diffR, position.placeC+diffC);
                 if (isLive() && brick != null && (creature = brick.getHolder()) != null && creature.factions != factions && creature.isLive()){
-                    synchronized (this) {
+                    synchronized (this.lifeState) {
                         System.err.println(CName + " - to fight - " + creature.CName);
                         if (!isLive()) {
                             System.err.println("die before fight...");
@@ -185,14 +209,16 @@ public class Creature implements Runnable{
         }
     }
 
-    synchronized boolean fight(int pkNum){
-        Random random = new Random();
-        int num = random.nextInt();
-        if (num < pkNum) {
-            beKilled();
-            return true;    // enemy win
+    boolean fight(int pkNum){
+        synchronized (this.lifeState) {
+            Random random = new Random();
+            int num = random.nextInt();
+            if (num < pkNum) {
+                beKilled();
+                return true;    // enemy win
+            }
+            return false;
         }
-        return false;
     }
 
     public void run() {
@@ -208,9 +234,15 @@ public class Creature implements Runnable{
                 stepForward(tgEnemy);
                 checkAndAttack();
 //                TimeUnit.SECONDS.sleep(1);
-//                TimeUnit.MILLISECONDS.sleep(1000);
+//                uiUpdater.showBattleField();
+//                System.err.println(CName + " sleep...");
+//                System.err.println(field);
+                TimeUnit.MILLISECONDS.sleep(1000);
 //                TimeUnit.MILLISECONDS.sleep(1);
-                yield();
+//                yield();
+            }
+            if (!isLive()){
+                leave(field);
             }
 //        } catch (InterruptedException e) {
 //            System.err.println("Interrupted.");
@@ -221,6 +253,10 @@ public class Creature implements Runnable{
 //            System.err.println("at the end of run");
 //        }
     }
+
+//    public void setUiUpdater(UIUpdater uiUpdater) {
+//        this.uiUpdater = uiUpdater;
+//    }
 }
 
 

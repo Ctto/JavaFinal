@@ -53,7 +53,13 @@ public class MainController  {
 //        Thread t = new Thread(uiUpdater);
 //        t.setDaemon(true);
 //        t.start();
+
+//        for (Creature creature: battle.getCreatures()){
+//            creature.setUiUpdater(uiUpdater);
+//        }
     }
+
+    UIUpdater getUiUpdater() { return uiUpdater; }
 
     void showBattleField(){
         uiUpdater.showBattleField();
@@ -62,7 +68,12 @@ public class MainController  {
     void startBattle(){
         if (!battle.isBattling()) {
             battle.battlePrepare(false);
-            battle.battleBegin();
+            new Thread() {
+                @Override
+                public void run() {
+                    battle.battleBegin();
+                }
+            }.start();
         }
     }
 
