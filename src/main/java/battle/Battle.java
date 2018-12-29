@@ -28,8 +28,8 @@ public class Battle {
         field = new BattleField(fieldRowNum, fieldColNum);
         cbqueue = new CBQueue();
         vlQueue = new VillainQueue(20); // with the first one as "蝎子精
-        grandpa = new Creature("爷爷", Factions.JUSTICE, 'T', "./pic/grandpa.jpg");
-        snake = new Creature("蛇精", Factions.EVIL, 'S', "./pic/snake.jpg");
+        grandpa = new Creature("爷爷", Factions.JUSTICE, 't', "./pic/grandpa.jpg");
+        snake = new Creature("蛇精", Factions.EVIL, 's', "./pic/snake.jpg");
         creatures = new ArrayList<>();
         creatures.add(grandpa);
         creatures.addAll(cbqueue.getBroQueue());
@@ -63,8 +63,8 @@ public class Battle {
         snake.stepOn(field, 9, 9);
 
         System.out.println("符号说明：");
-        System.out.println("葫芦娃：1-7，爷爷：T（拐杖嘛）");
-        System.out.println("小喽啰：v（一把钢叉），蝎子精：w（两把钢叉），蛇精：S（魔鬼身材）");
+        System.out.println("葫芦娃：1-7，爷爷：t（拐杖嘛）");
+        System.out.println("小喽啰：v（一把钢叉），蝎子精：w（两把钢叉），蛇精：s（魔鬼身材）");
         System.out.println();
 
         setVlQueueFormation(formation);
@@ -99,11 +99,11 @@ public class Battle {
                 exec.execute(creature);
         }
         exec.shutdown();
-//        while (true){
-//            if (exec.isTerminated()){
-//                break;
-//            }
-//        }
+        while (true){
+            if (exec.isTerminated()){
+                break;
+            }
+        }
         System.out.println("Battle end");
         battling = false;
 //        exit(0);
@@ -116,4 +116,12 @@ public class Battle {
     public List<Creature> getCreatures() {return creatures;}
 
     public BattleField getField() { return field; }
+
+    public void changeFormation(boolean next){
+        if (next)
+            formation = Formation.values()[(formation.ordinal() + 1) % 8];
+        else
+            formation = Formation.values()[(formation.ordinal() - 1) % 8];
+        setVlQueueFormation(formation);
+    }
 }

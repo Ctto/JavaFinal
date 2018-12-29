@@ -233,30 +233,20 @@ public class Creature implements Runnable{
                     break;
                 stepForward(tgEnemy);
                 checkAndAttack();
-//                TimeUnit.SECONDS.sleep(1);
-//                uiUpdater.showBattleField();
-//                System.err.println(CName + " sleep...");
-//                System.err.println(field);
                 TimeUnit.MILLISECONDS.sleep(1000);
-//                TimeUnit.MILLISECONDS.sleep(1);
-//                yield();
             }
             if (!isLive()){
+                TimeUnit.MILLISECONDS.sleep(100);
                 leave(field);
             }
-//        } catch (InterruptedException e) {
-//            System.err.println("Interrupted.");
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.err.println("Interrupted.");
         }
 //        finally {
 //            System.err.println("at the end of run");
 //        }
     }
 
-//    public void setUiUpdater(UIUpdater uiUpdater) {
-//        this.uiUpdater = uiUpdater;
-//    }
 }
 
 

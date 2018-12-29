@@ -45,8 +45,15 @@ public class MainController  {
             @Override
             public void handle(KeyEvent event) {
 //                System.err.println("code:"+event.getCode() + " ,text:" + event.getText());
-                if (event.getCode() == KeyCode.SPACE){
-                    startBattle();
+                KeyCode keyCode = event.getCode();
+                if (!battle.isBattling()) {
+                    if (keyCode == KeyCode.SPACE) {
+                        startBattle();
+                    } else if (keyCode == KeyCode.UP || keyCode == KeyCode.LEFT) {
+                        changeFormation(false);
+                    } else if (keyCode == KeyCode.DOWN || keyCode == KeyCode.RIGHT) {
+                        changeFormation(true);
+                    }
                 }
             }
         });
@@ -66,15 +73,19 @@ public class MainController  {
     }
 
     void startBattle(){
-        if (!battle.isBattling()) {
-            battle.battlePrepare(false);
-            new Thread() {
+//        if (!battle.isBattling()) {
+        battle.battlePrepare(false);
+        new Thread() {
                 @Override
                 public void run() {
                     battle.battleBegin();
                 }
             }.start();
-        }
+//        }
+    }
+
+    void changeFormation(boolean next) {
+        battle.changeFormation(next);
     }
 
     //no response - should be set on scene...
