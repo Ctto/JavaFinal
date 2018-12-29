@@ -43,27 +43,26 @@ public class Creature implements Runnable{
 
     public boolean stepOn(BattleField field, int r, int c) {
         Brick<Creature> brick = field.getBrick(r, c);
-//        System.err.print(CName + ":" + r + ", " + c);
-        if (brick.setHolder(this, sign)){
-            position.setPosition(r,c);
-//            System.err.println(" OK");
-            return true;
+        try {
+            if (brick.setHolder(this, sign)){
+                position.setPosition(r,c);
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (NullPointerException e){
+            System.err.println(CName + "is stepping on brick:" + r + ", " + c + ", no such brick");
+            e.printStackTrace();
         }
-        else {
-//            System.err.println(" fail");
-            return false;
-        }
-//        synchronized (brick){
-//            if (brick.getHolder() == null){
-//                brick.setHolder(this);
-//                brick.setSign(sign);
-//            }
-//        }
+        return false;
     }
 
-    void leave(BattleField field) {
-        Brick<Creature> brick = field.getBrick(position.placeR, position.placeC);
-        brick.setHolder(null, '_');
+    public void leave(BattleField field) {
+        if (position.placeC != -1 || position.placeR != -1) {
+            Brick<Creature> brick = field.getBrick(position.placeR, position.placeC);
+            brick.setHolder(null, '_');
+        }
         position.setPosition(-1, -1);
     }
 
@@ -80,11 +79,16 @@ public class Creature implements Runnable{
     }
 
     // for battle
-    public void setBattleInfo(BattleField field, List<Creature> creatureList){
-        this.field = field;
+    public void battlePrepare(BattleField field, List<Creature> creatureList){
+        leave(field);   // if on field, leave
+        setLive(true);  // if dead, rebirth
+        this.field = field;     // set field & border info
         borderR = field.getRow();
         borderC = field.getCol();
-        enemyList = new ArrayList<>();
+        if (enemyList == null)     // get enemyList
+            enemyList = new ArrayList<>();
+        else
+            enemyList.clear();
         for(Creature creature:creatureList){
             if (creature.factions != factions){
                 enemyList.add(creature);
@@ -93,32 +97,24 @@ public class Creature implements Runnable{
     }
 
     Creature searchForEnemy(List<Creature> enemyList) {
-//        for (Iterator<Creature> it = enemyList.iterator(); it.hasNext(); ) {
-//            if (!it.next().isLive())
-//                it.remove();
-//        }
         enemyList.removeIf(creature -> !creature.isLive());
         if (enemyList.isEmpty())
             return null;
         else
             return enemyList.get(0);
-//        for (Creature enemy: enemyList){
-//            if (enemy.isLive()){
-//                return enemy;
-//            }
-//        }
     }
 
     synchronized void stepForward(Creature enemy) {
+//    void stepForward(Creature enemy) {
         int orgPlaceR = position.placeR, orgPlaceC = position.placeC;
         int r = orgPlaceR, c = orgPlaceC;
         leave(field);
 
         Position pos = enemy.getPosition();
-        if (pos.placeR > orgPlaceR) r = orgPlaceR + 1;
-        else if (pos.placeR < orgPlaceR) r = orgPlaceR - 1;
-        else if (pos.placeC > orgPlaceC) c = orgPlaceC + 1;
-        else if (pos.placeC < orgPlaceC) c = orgPlaceC - 1;
+        if (pos.placeR > orgPlaceR) r = orgPlaceR + 1 < borderR ? orgPlaceR + 1: orgPlaceR;
+        else if (pos.placeR < orgPlaceR) r = orgPlaceR - 1 >= 0 ? orgPlaceR - 1:orgPlaceR;
+        else if (pos.placeC > orgPlaceC) c = orgPlaceC + 1 < borderC ? orgPlaceC + 1: orgPlaceC;
+        else if (pos.placeC < orgPlaceC) c = orgPlaceC - 1 >= 0 ? orgPlaceC - 1:orgPlaceC;
 
         while (true) {
 //            System.err.println(CName+"StepForward to " + enemy);
@@ -131,10 +127,10 @@ public class Creature implements Runnable{
                 case 0: r = orgPlaceR + 1 < borderR ? orgPlaceR + 1: orgPlaceR;
                     c = orgPlaceC;
                     break;
-                case 1: r = orgPlaceR - 1 >= 0 ? orgPlaceC - 1:orgPlaceC;
+                case 1: r = orgPlaceR - 1 >= 0 ? orgPlaceR - 1:orgPlaceR;
                     c = orgPlaceC;
                     break;
-                case 2: c = orgPlaceC + 1 < borderR ? orgPlaceR + 1: orgPlaceR;
+                case 2: c = orgPlaceC + 1 < borderC ? orgPlaceC + 1: orgPlaceC;
                     r = orgPlaceR;
                     break;
                 case 3: c = orgPlaceC - 1 >= 0 ? orgPlaceC - 1:orgPlaceC;
@@ -154,7 +150,7 @@ public class Creature implements Runnable{
 
     synchronized void beKilled() {
         live = false;
-        System.out.println(CName + " is killed.");
+        System.err.print(CName + " is killed");
     }
 
     synchronized public void setLive(boolean live) {
@@ -162,17 +158,25 @@ public class Creature implements Runnable{
     }
 
     void checkAndAttack(){
+        Creature creature;
         for (int diffR = -1; diffR <= 1; diffR++){
             for (int diffC = -1; diffC <= 1; diffC++) {
                 Brick<Creature> brick = field.getBrick(position.placeR+diffR, position.placeC+diffC);
-                Creature creature;
-                if (brick != null && (creature = brick.getHolder()) != null && creature.factions != factions){
+                if (isLive() && brick != null && (creature = brick.getHolder()) != null && creature.factions != factions && creature.isLive()){
                     synchronized (this) {
-                        if (!isLive())
+                        System.err.println(CName + " - to fight - " + creature.CName);
+                        if (!isLive()) {
+                            System.err.println("die before fight...");
                             return;
+                        }
                         Random random = new Random();
                         if (!creature.fight(random.nextInt())) {
                             beKilled();
+                            System.err.println(" by" + creature.CName);
+                            return;
+                        }
+                        else {
+                            System.err.println(" by" + CName);
                             return;
                         }
                     }
@@ -194,6 +198,7 @@ public class Creature implements Runnable{
     public void run() {
         try{
             while (isLive() && !enemyList.isEmpty()){
+//                System.err.println(Thread.currentThread());
                 if (tgEnemy == null || !tgEnemy.isLive())
                     tgEnemy = searchForEnemy(enemyList);
                 if (tgEnemy == null)
@@ -202,12 +207,15 @@ public class Creature implements Runnable{
                     break;
                 stepForward(tgEnemy);
                 checkAndAttack();
-                TimeUnit.SECONDS.sleep(1);
-//                yield();
+//                TimeUnit.SECONDS.sleep(1);
+//                TimeUnit.MILLISECONDS.sleep(1000);
+//                TimeUnit.MILLISECONDS.sleep(1);
+                yield();
             }
-        } catch (InterruptedException e){
-//        } catch (Exception e){
-            System.err.println("Interrupted.");
+//        } catch (InterruptedException e) {
+//            System.err.println("Interrupted.");
+        } catch (Exception e){
+            e.printStackTrace();
         }
 //        finally {
 //            System.err.println("at the end of run");
@@ -219,19 +227,3 @@ public class Creature implements Runnable{
 interface CreatureQueueBehaviors {
     void JumpOntoField(BattleField field, Formation form);
 }
-
-/*
-class Underlings extends creature.Creature{
-    Underlings() {
-        super("小喽啰", creature.Factions.EVIL, 'v');
-    }
-    // implements the tools.Generator interface using anonymous inner classes
-    public static tools.Generator<Underlings> generator() {
-        return new tools.Generator<Underlings>() {
-            public Underlings next() {
-                return new Underlings();
-            }
-        };
-    }
-}
-*/

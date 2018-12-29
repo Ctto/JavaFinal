@@ -50,4 +50,12 @@ public class BattleField{
     public int getCol() {
         return col;
     }
+
+    public void clearField(){
+        for (Brick<Creature>[] brickRow : bricks){
+            for (Brick<Creature> brick: brickRow){
+                brick.setHolder(null, '_');
+            }
+        }
+    }
 }

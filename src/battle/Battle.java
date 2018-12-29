@@ -21,6 +21,8 @@ public class Battle {
     private static Creature grandpa;
     private static Creature snake;
     private static List<Creature> creatures;
+    private static Formation formation;
+    private static boolean battling = false;
 
     static {
         field = new BattleField(fieldRowNum, fieldColNum);
@@ -34,23 +36,29 @@ public class Battle {
         creatures.add(snake);
         creatures.addAll(vlQueue.getVlQueue());
         for (Creature creature: creatures){
-            creature.setBattleInfo(field, creatures);
+            creature.battlePrepare(field, creatures);
         }
+        formation = Formation.ARROW;
     }
 
-    public void battlePrepare(){
-//    public static void CbQueueSorting(){
-        Sorter sorter = new Sorter();
-        System.out.println("creature.CalabashBro queuing...");
-        cbqueue.randomQueue();
-        System.out.println("Before sorting by name:");
-        cbqueue.countOffAcName();
-        sorter.SortByName(cbqueue);
-        System.out.println("After sorting by name:");
-        cbqueue.countOffAcName();
-        System.out.println();
-        cbqueue.JumpOntoField(field, Formation.HYDRA);
+    public void battlePrepare(boolean sort){
+        for (Creature creature: creatures){
+            creature.battlePrepare(field, creatures);
+        }
+        field.clearField();
 
+        if (sort) {
+            Sorter sorter = new Sorter();
+            System.out.println("creature.CalabashBro queuing...");
+            cbqueue.randomQueue();
+            System.out.println("Before sorting by name:");
+            cbqueue.countOffAcName();
+            sorter.SortByName(cbqueue);
+            System.out.println("After sorting by name:");
+            cbqueue.countOffAcName();
+            System.out.println();
+        }
+        cbqueue.JumpOntoField(field, Formation.HYDRA);
         grandpa.stepOn(field, 9, 1);
         snake.stepOn(field, 9, 9);
 
@@ -58,6 +66,8 @@ public class Battle {
         System.out.println("葫芦娃：1-7，爷爷：T（拐杖嘛）");
         System.out.println("小喽啰：v（一把钢叉），蝎子精：w（两把钢叉），蛇精：S（魔鬼身材）");
         System.out.println();
+
+        setVlQueueFormation(formation);
     }
 
     public void setVlQueueFormation(Formation form){
@@ -66,26 +76,12 @@ public class Battle {
         System.out.println("长蛇阵 vs " + form.Cname + "阵！ 激战！（最后一句真的中二……");
         System.out.println(field);
         System.out.println();
+        System.out.flush();
     }
 
     public Brick<Creature>[][] getBricks(){
         return field.bricks;
     }
-//    public static void main(String[] args) {
-//        battlePrepare();
-//
-//        vlQueue.JumpOntoField(field, Formation.HOOKEDSPEAR);
-//        System.out.println("长蛇阵 vs 偃月阵！ 激战！（最后一句好中二……");
-//        //field.ShowField();
-//        System.out.println(field);
-//        System.out.println();
-//
-//        vlQueue.leaveField(field);
-//        vlQueue.JumpOntoField(field, Formation.ARROW);
-//        System.out.println("长蛇阵 vs 锋矢阵！ 激战！（最后一句真的中二……");
-//        //field.ShowField();
-//        System.out.println(field);
-//    }
 
     public int getFieldRowNum(){
         return fieldRowNum;
@@ -96,6 +92,7 @@ public class Battle {
     }
 
     public void battleBegin() {
+        battling = true;
         ExecutorService exec = Executors.newCachedThreadPool();
         for (Creature creature: creatures){
             if (creature.isLive())
@@ -108,25 +105,11 @@ public class Battle {
             }
         }
         System.out.println("Battle end");
+        battling = false;
 //        exit(0);
     }
 
-    public void test() {
-        for (Creature creature:creatures)
-            creature.setLive(false);
-        snake.setLive(true);
-        grandpa.setLive(true);
-        ExecutorService exec = Executors.newCachedThreadPool();
-        exec.execute(grandpa);
-        exec.execute(snake);
-        exec.shutdown();
-        while (true){
-            if (exec.isTerminated()){
-                System.out.println("end-------");
-                break;
-            }
-        }
-        System.out.println("at the end of test-------");
-        exit(0);
+    public boolean isBattling(){
+        return battling;
     }
 }

@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class UnderlingsGenerator implements Generator<Creature> {
+    private static int count = 0;
     public Creature next()  {
-        return new Creature("小喽啰", Factions.EVIL, 'v', "./pic/bat.jpg");
+        return new Creature("小喽啰"+(++count), Factions.EVIL, 'v', "./pic/bat.jpg");
     }
 }
 
@@ -34,6 +35,8 @@ public class VillainQueue implements CreatureQueueBehaviors {
     }
 
     public void JumpOntoField(BattleField field, Formation form){
+        for (Creature underlings: vlQueue)
+            underlings.setLive(true);
         int idx = 0;
         for (int r = 0; r < 11; r++) {
             for (int c = 0; c < 10; c++) {

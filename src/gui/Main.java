@@ -3,7 +3,10 @@ package gui;
 import com.sun.org.apache.bcel.internal.generic.IADD;
 import creature.Creature;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.canvas.Canvas;
@@ -14,78 +17,39 @@ import javafx.stage.Stage;
 
 import battle.*;
 
+import java.io.IOException;
+
 
 public class Main extends Application {
-    private static Battle battle;
-    static {
-        battle = new Battle();
-        battle.battlePrepare();
-        battle.setVlQueueFormation(Formation.ARROW);
-    }
 
-    private static double fieldWidth, fieldHeight, imageSz;
-    private static final int fieldRowNum, fieldColNum;
-    private static double startPtX, startPtY = 20;
-    static {
-        fieldColNum = battle.getFieldColNum();
-        fieldRowNum = battle.getFieldRowNum();
-    }
-
+    private static double wdWidth = 1000, wdHeight = 750;
+    private MainController controller;
 
     public void start(Stage primaryStage) {
-//        StackPane root = new StackPane();
-//        StackPane pane = new StackPane();
-//        BackgroundImage backgroundImage= new BackgroundImage(
-//                new Image(Main.class.getResourceAsStream("./res/background.jpg")),
-//                BackgroundRepeat.REPEAT,
-//                BackgroundRepeat.NO_REPEAT,
-//                BackgroundPosition.CENTER,
-//                BackgroundSize.DEFAULT);
-//        root.setBackground(new Background(backgroundImage));
-//        pane.setBackground(new Background(backgroundImage));
+        try {
+            // FXMLLoader.load ... static method:can't get controller
+//            Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
+            Parent root = fxmlLoader.load();
+            controller = fxmlLoader.getController();
+//            Bounds bounds = root.getLayoutBounds(); // at run time...all zero?
+//            wdHeight = bounds.getHeight();
+//            wdWidth = bounds.getWidth();
 
-        Image image = new Image(Main.class.getResourceAsStream("./res/background.jpg"));
-        fieldWidth = image.getWidth();
-        fieldHeight = image.getHeight();
-        imageSz = (fieldHeight - 2*startPtY)/fieldRowNum;
-        startPtX = (fieldWidth - fieldColNum * imageSz)/2;
-        ImageView imageView = new ImageView(image);
-        Group root = new Group();
-        root.getChildren().add(imageView);
+            Scene scene = new Scene(root, wdWidth, wdHeight);
+            controller.init(scene, wdHeight, wdWidth);
+            primaryStage.setTitle("Calabash Battle!");
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+            primaryStage.show();
 
-        Canvas canvas = new Canvas(fieldWidth, fieldHeight);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        root.getChildren().add(canvas);
-
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("Calabash Battle!");
-        primaryStage.setScene(scene);
-//        primaryStage.setResizable(false);
-        primaryStage.show();
-
-        showBattleField(gc);
-        battle.battleBegin();
-//        battle.test();
+            controller.showBattleField();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    private static void showBattleField(GraphicsContext gc){
-        Brick<Creature>[][] bricks = battle.getBricks();
-        Creature creature;
-//        Image orgimage = new Image(Main.class.getResourceAsStream("./res/background.jpg"));
-        for (int r = 0; r < fieldRowNum; r++) {
-            for (int c = 0; c < fieldColNum; c++) {
-                if ((creature = bricks[r][c].getHolder()) != null && creature.isLive()){
-                    Image image = creature.getImage();
-                    gc.drawImage(image, startPtX + imageSz * c, startPtY + imageSz * r, imageSz, imageSz);
-                }
-//                else {
-//                    gc.drawImage(orgimage, startPtX + imageSz * c, startPtY + imageSz * r, imageSz, imageSz);
-//                }
-            }
-        }
     }
 }
