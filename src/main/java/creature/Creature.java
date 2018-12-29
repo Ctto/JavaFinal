@@ -4,12 +4,13 @@ import battle.*;
 import gui.UIUpdater;
 import javafx.scene.image.Image;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.yield;
 
-class Position {
+class Position implements Serializable{
     int placeR = -1, placeC = -1;
     void setPosition(int r, int c) {
         placeC = c;
@@ -17,7 +18,7 @@ class Position {
     }
 }
 
-class LifeState {
+class LifeState implements Serializable{
     private boolean live = true;
     synchronized void setLive(boolean live){
         this.live = live;
@@ -27,19 +28,18 @@ class LifeState {
     }
 }
 
-public class Creature implements Runnable{
-    String CName;
-    private Factions factions;
-//    private int placeR, placeC;
+public class Creature implements Runnable, Serializable {
+    transient String CName;
+    transient private Factions factions;
+    private final LifeState lifeState;
     private final Position position;
     private char sign;
-    private Image image;
+    transient private Image image;
 
-    private BattleField field;
-    private int borderR, borderC;
-    private final LifeState lifeState;
-    private Creature tgEnemy;
-    private List<Creature> enemyList;
+    transient private BattleField field;
+    transient private int borderR, borderC;
+    transient private Creature tgEnemy;
+    transient private List<Creature> enemyList;
 
 //    UIUpdater uiUpdater;
 
@@ -88,6 +88,10 @@ public class Creature implements Runnable{
 
     public Image getImage(){
         return image;
+    }
+
+    public char getSign() {
+        return sign;
     }
 
     Position getPosition(){

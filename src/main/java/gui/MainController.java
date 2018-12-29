@@ -1,22 +1,16 @@
 package gui;
 
 import battle.Battle;
-import battle.Brick;
-import battle.Formation;
-import creature.Creature;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-
-import java.util.concurrent.TimeUnit;
 
 public class MainController  {
     private Scene mainScene;
@@ -27,7 +21,10 @@ public class MainController  {
     @FXML
     private Canvas mainCanvas;
     private GraphicsContext gc;
+    private Stage mainStage;
     private UIUpdater uiUpdater;
+    private BattleRecorder battleRecorder;
+    private RecordLoader recordLoader;
 
     private static Battle battle;
     static {
@@ -35,65 +32,64 @@ public class MainController  {
         battle.battlePrepare(true);
     }
 
-    void init(Scene scene, double height, double width) {
-//        gc = mainCanvas.getGraphicsContext2D();
-        uiUpdater = new UIUpdater(battle, mainCanvas.getGraphicsContext2D(), height, width);
-        uiUpdater.showBattleField();
+    void init(Stage stage, Scene scene, double height, double width) {
+        gc = mainCanvas.getGraphicsContext2D();
+        uiUpdater = new UIUpdater(battle, gc, height, width);
+        uiUpdater.showBattleField(battle.getBricks());
 
+        mainStage = stage;
         mainScene = scene;
         mainScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
 //                System.err.println("code:"+event.getCode() + " ,text:" + event.getText());
                 KeyCode keyCode = event.getCode();
-                if (!battle.isBattling()) {
+                if (!battle.isBattling() && !uiUpdater.isReplaying()) {
                     if (keyCode == KeyCode.SPACE) {
                         startBattle();
                     } else if (keyCode == KeyCode.UP || keyCode == KeyCode.LEFT) {
                         changeFormation(false);
                     } else if (keyCode == KeyCode.DOWN || keyCode == KeyCode.RIGHT) {
                         changeFormation(true);
+                    } else if (keyCode == KeyCode.L) {
+                        loadRecord();
+                    } else if (keyCode == KeyCode.P){
+                        replayBattle();
                     }
                 }
             }
         });
-//        Thread t = new Thread(uiUpdater);
-//        t.setDaemon(true);
-//        t.start();
-
-//        for (Creature creature: battle.getCreatures()){
-//            creature.setUiUpdater(uiUpdater);
-//        }
     }
 
-    UIUpdater getUiUpdater() { return uiUpdater; }
-
-    void showBattleField(){
-        uiUpdater.showBattleField();
-    }
-
+    /* OnKeyPressed - SPACE */
     void startBattle(){
-//        if (!battle.isBattling()) {
         battle.battlePrepare(false);
+        battleRecorder = new BattleRecorder(battle);
+        battleRecorder.startRecord();
         new Thread() {
                 @Override
                 public void run() {
                     battle.battleBegin();
                 }
             }.start();
-//        }
     }
 
+    /* OnKeyPressed - UP、DOWN、LEFT、RIGHT */
     void changeFormation(boolean next) {
         battle.changeFormation(next);
     }
 
-    //no response - should be set on scene...
-//    @FXML
-//    public void keyPressHandle(KeyEvent event){
-//        System.err.println(event.getCode());
-//        if (event.getCode() == KeyCode.SPACE){
-//            System.err.println("press Key Space");
-//        }
-//    }
+    /* OnKeyPressed - L */
+    void loadRecord() {
+        recordLoader = new RecordLoader(mainStage);
+        recordLoader.openFile();
+    }
+
+    /* OnKeyPressed - P */
+    void replayBattle() {
+        if (recordLoader == null || !recordLoader.replayPrepare())
+            return;
+        System.err.println("recordLoader OK, uiUpdater prepare to replay");
+        uiUpdater.replayBegin(recordLoader.getInputStream());
+    }
 }

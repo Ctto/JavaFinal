@@ -25,31 +25,14 @@ public class Main extends Application {
 //            wdWidth = bounds.getWidth();
 
             Scene scene = new Scene(root, wdWidth, wdHeight);
-            controller.init(scene, wdHeight, wdWidth);
+            controller.init(primaryStage, scene, wdHeight, wdWidth);
             primaryStage.setTitle("Calabash Battle!");
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
 
-            controller.showBattleField();
-//            UIUpdater uiUpdater = controller.getUiUpdater();
-//
-//            Thread thread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    while (true) {
-//                        try {
-//                            Thread.sleep(100);
-//                        } catch (InterruptedException e){
-//                            e.printStackTrace();
-//                        }
-//
-//                        Platform.runLater(uiUpdater);
-//                    }
-//                }
-//            });
-//            thread.setDaemon(true);
-//            thread.start();
+//            controller.showBattleField();
+
         } catch (IOException e){
             e.printStackTrace();
         }

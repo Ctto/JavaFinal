@@ -1,7 +1,9 @@
 package battle;
 
-public class Brick<T> {
-    char sign;
+import java.io.Serializable;
+
+public class Brick<T> implements Serializable {
+    transient char sign;
     T holder;
     Brick() {
         sign = '_';

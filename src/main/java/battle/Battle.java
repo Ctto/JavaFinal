@@ -70,7 +70,7 @@ public class Battle {
         setVlQueueFormation(formation);
     }
 
-    public void setVlQueueFormation(Formation form){
+    void setVlQueueFormation(Formation form){
         vlQueue.leaveField(field);
         vlQueue.JumpOntoField(field, form);
         System.out.println("长蛇阵 vs " + form.Cname + "阵！ 激战！（最后一句真的中二……");

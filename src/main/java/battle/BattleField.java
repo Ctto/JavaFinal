@@ -2,8 +2,10 @@ package battle;
 
 import creature.Creature;
 
-public class BattleField{
-    private int row, col;
+import java.io.Serializable;
+
+public class BattleField implements Serializable {
+    transient private int row, col;
     Brick<Creature>[][] bricks;
 
     @SuppressWarnings("unchecked")
@@ -43,6 +45,10 @@ public class BattleField{
         return null;
     }
 
+    public Brick<Creature>[][] getBricks() {
+        return bricks;
+    }
+
     public int getRow() {
         return row;
     }
@@ -51,7 +57,7 @@ public class BattleField{
         return col;
     }
 
-    public void clearField(){
+    void clearField(){
         for (Brick<Creature>[] brickRow : bricks){
             for (Brick<Creature> brick: brickRow){
                 brick.setHolder(null, '_');

@@ -2,9 +2,9 @@ package creature;
 
 
 public class CalabashBro extends Creature {
-    private Color color;
-    private int placeInQue;
-    private int seq;
+    transient private Color color;
+    transient private int placeInQue;
+    transient private int seq;
 
     CalabashBro(String CName, Factions factions, Color color, int seq, int placeInQue, char sign, String imagePath) {
         super(CName, factions, sign, imagePath);
