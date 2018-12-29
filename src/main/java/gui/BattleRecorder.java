@@ -12,19 +12,21 @@ import java.io.*;
 
 public class BattleRecorder {
     Battle battle;
-    BattleField field;
+//    BattleField field;
     private Timeline timeline;
     private static int fileCount = 1;
     private ObjectOutputStream out;
 
     public BattleRecorder(Battle battle){
         this.battle = battle;
-        field = battle.getField();
+//        field = battle.getField();
     }
 
+    private static int outCount = 0;
     public void startRecord(){
         try {
-            out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Battle" + fileCount + ".out")));
+            out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Battle" + fileCount++ + ".out")));
+//            out = new ObjectOutputStream(new FileOutputStream("Battle" + fileCount++ + ".out"));
             timeline = new Timeline();
             timeline.setCycleCount(Timeline.INDEFINITE);
             Duration duration = Duration.millis(10);
@@ -32,14 +34,18 @@ public class BattleRecorder {
                 @Override
                 public void handle(ActionEvent event) {
                     try {
-                        out.writeObject(field);
-                        out.flush();
+//                        out.writeObject(field);
+                        out.writeObject(battle.getCreatures());
+//                        out.flush();
+                        outCount++;
+//                        System.err.println("out "+outCount);
                         if (!battle.isBattling()){
                             out.writeObject(null);
                             out.flush();
                             out.close();
+                            System.err.println("out "+outCount);
                             timeline.stop();
-//                            System.err.println("Recorder: timeline stop...");
+                            System.err.println("Recorder: timeline stop...");
                         }
                     } catch (IOException e){
                         e.printStackTrace();
@@ -52,6 +58,18 @@ public class BattleRecorder {
             e.printStackTrace();
         }
     }
+
+//    public void recordPrepare(){
+//        try {
+//            out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Battle" + fileCount++ + ".out")));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public ObjectOutputStream getOutStream() {
+//        return out;
+//    }
 
 //    public void endRecord() {
 //        try {

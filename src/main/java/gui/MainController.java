@@ -35,7 +35,7 @@ public class MainController  {
     void init(Stage stage, Scene scene, double height, double width) {
         gc = mainCanvas.getGraphicsContext2D();
         uiUpdater = new UIUpdater(battle, gc, height, width);
-        uiUpdater.showBattleField(battle.getBricks());
+        uiUpdater.showBattleField();
 
         mainStage = stage;
         mainScene = scene;
@@ -63,9 +63,12 @@ public class MainController  {
 
     /* OnKeyPressed - SPACE */
     void startBattle(){
-        battle.battlePrepare(false);
+//        battle.battlePrepare(false);
         battleRecorder = new BattleRecorder(battle);
         battleRecorder.startRecord();
+//        battleRecorder.recordPrepare();
+//        uiUpdater.setOutStream(battleRecorder.getOutStream());
+//        battleRecorder.startRecord();
         new Thread() {
                 @Override
                 public void run() {

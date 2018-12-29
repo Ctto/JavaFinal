@@ -121,7 +121,8 @@ public class Battle {
         if (next)
             formation = Formation.values()[(formation.ordinal() + 1) % 8];
         else
-            formation = Formation.values()[(formation.ordinal() - 1) % 8];
-        setVlQueueFormation(formation);
+            formation = Formation.values()[formation.ordinal()==0? 7:((formation.ordinal() - 1) % 8)];
+//        setVlQueueFormation(formation);
+        battlePrepare(false);
     }
 }

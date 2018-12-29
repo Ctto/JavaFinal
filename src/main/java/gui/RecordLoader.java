@@ -26,6 +26,7 @@ public class RecordLoader {
             if (file == null)
                 return false;
             in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+//            in = new ObjectInputStream(new FileInputStream(file));
             return true;
         } catch (IOException e) {
             e.printStackTrace();

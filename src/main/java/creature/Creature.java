@@ -10,14 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.yield;
 
-class Position implements Serializable{
-    int placeR = -1, placeC = -1;
-    void setPosition(int r, int c) {
-        placeC = c;
-        placeR = r;
-    }
-}
-
 class LifeState implements Serializable{
     private boolean live = true;
     synchronized void setLive(boolean live){
@@ -94,7 +86,7 @@ public class Creature implements Runnable, Serializable {
         return sign;
     }
 
-    Position getPosition(){
+    public Position getPosition(){
         synchronized (this.position) {
             return position;
         }
