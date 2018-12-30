@@ -18,6 +18,9 @@ class LifeState implements Serializable{
     synchronized boolean isLive(){
         return live;
     }
+    public String toString() {
+        return String.valueOf(live);
+    }
 }
 
 public class Creature implements Runnable, Serializable {
@@ -75,7 +78,8 @@ public class Creature implements Runnable, Serializable {
     }
 
     public String toString() {
-        return CName;
+//        return CName;
+        return CName + ":" + position + " " + lifeState;
     }
 
     public Image getImage(){

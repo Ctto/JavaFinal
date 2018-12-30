@@ -7,7 +7,7 @@ import java.io.*;
 
 public class RecordLoader {
     Stage stage;
-    private ObjectInputStream in;
+    private DataInputStream in;
     private FileChooser fileChooser;
     File file;
 
@@ -25,7 +25,7 @@ public class RecordLoader {
         try {
             if (file == null)
                 return false;
-            in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+            in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 //            in = new ObjectInputStream(new FileInputStream(file));
             return true;
         } catch (IOException e) {
@@ -34,7 +34,7 @@ public class RecordLoader {
         return false;
     }
 
-    ObjectInputStream getInputStream() {
+    DataInputStream getInputStream() {
         return in;
     }
 }

@@ -15,4 +15,8 @@ public class Position implements Serializable {
     public int getPlaceC(){
         return placeC;
     }
+
+    public String toString(){
+        return "(" + placeR + "," + placeC + ")";
+    }
 }
