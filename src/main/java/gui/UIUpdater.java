@@ -32,21 +32,19 @@ public class UIUpdater{
 //public class UIUpdater implements Runnable{
     private static double wdWidth, wdHeight;
     private static int fieldRowNum, fieldColNum;
-    private static double startPtX, startPtY = 20, imageSz;
+    private static double startPtX, startPtY = 15, imageSz;
     private static Map<Character, Image> imageMap = new HashMap<>();
 
-    Battle battle;
-//    BattleField field;
+    private Battle battle;
     private Brick<Creature>[][] bricks;
     private GraphicsContext gc;
-    Timeline timeline;
-    boolean replaying = false;
-    DataInputStream in;
+    private Timeline timeline;
+    private boolean replaying = false, replayReady = false;
+    private DataInputStream in;
 
 
     UIUpdater(Battle battle, GraphicsContext gc, double height, double width) {
         this.battle = battle;
-//        field = battle.getField();
         List<Creature> creatureList = battle.getCreatures();
         for (Creature creature : creatureList) {
             char sign = creature.getSign();
@@ -64,13 +62,12 @@ public class UIUpdater{
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         Duration duration = Duration.millis(10);
-//        Duration duration = Duration.millis(100);
         KeyFrame keyFrame = new KeyFrame(duration, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (!replaying) {
+                if (!replayReady && !replaying) {
                     showBattleField();
-                } else {
+                } else if (replaying){
                     showBattleFieldRePlaying();
                 }
             }
@@ -83,8 +80,8 @@ public class UIUpdater{
         wdHeight = height;
         wdWidth = width;
         imageSz = (wdHeight - 2*startPtY)/fieldRowNum;
-//        startPtX = (wdWidth - fieldColNum * imageSz)/5;
-        startPtX = (wdWidth - fieldColNum * imageSz)/2;
+        startPtX = (wdWidth - fieldColNum * imageSz)/5;
+//        startPtX = (wdWidth - fieldColNum * imageSz)/2;
     }
 
     void showBattleField(){
@@ -106,13 +103,16 @@ public class UIUpdater{
 
     boolean isReplaying() { return replaying; }
 
-    void replayBegin(DataInputStream in) {
-        this.in = in;
+    void replayBegin() {
         replaying = true;
-        inObjectCount = 0;
     }
 
-    private int inObjectCount = 0;
+    void replayPrepare(DataInputStream in){
+        this.in = in;
+        replayReady = true;
+        showBattleFieldRePlaying();
+    }
+
     void showBattleFieldRePlaying(){
         try {
 //            @SuppressWarnings("unchecked")
@@ -137,14 +137,16 @@ public class UIUpdater{
             }
             if (sign == '|') {
                 in.close();
+                in = null;
                 replaying = false;
-                System.err.println("inObjectCount:" + inObjectCount + ", Battle replay over.");
+                System.err.println("Battle replay over.");
             } // == ';', ctn
         } catch (EOFException e) {
             try {
                 in.close();
+                in = null;
                 replaying = false;
-                System.err.println("inObjectCount:" + inObjectCount + ", Battle replay over.");
+                System.err.println("Battle replay over.(EOF)");
 //                exit(-1);
             } catch (IOException ioE){
                 System.err.println("Record file close error.");
@@ -154,9 +156,7 @@ public class UIUpdater{
         }
     }
 
-//    int count = 0;
-//    void setOutStream(ObjectOutputStream out) {
-//        this.out = out;
-//        count = 0;
-//    }
+    void setReplayReady(boolean replayReady) {
+        this.replayReady = replayReady;
+    }
 }

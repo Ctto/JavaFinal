@@ -11,7 +11,8 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    private static double wdWidth = 1000, wdHeight = 750;
+    private static double wdWidth = 1100, wdHeight = 750;
+    private static double canvasWidth = 1000, canvasHeight = 750;
 
     public void start(Stage primaryStage) {
         try {
@@ -25,14 +26,13 @@ public class Main extends Application {
 //            wdWidth = bounds.getWidth();
 
             Scene scene = new Scene(root, wdWidth, wdHeight);
-            controller.init(primaryStage, scene, wdHeight, wdWidth);
+            controller.init(primaryStage, scene, canvasHeight, canvasWidth);
             primaryStage.setTitle("Calabash Battle!");
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
 
 //            controller.showBattleField();
-
         } catch (IOException e){
             e.printStackTrace();
         }

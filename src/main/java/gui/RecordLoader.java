@@ -37,4 +37,8 @@ public class RecordLoader {
     DataInputStream getInputStream() {
         return in;
     }
+
+    boolean isClosed() {
+        return in == null;
+    }
 }

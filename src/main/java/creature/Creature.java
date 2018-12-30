@@ -78,8 +78,8 @@ public class Creature implements Runnable, Serializable {
     }
 
     public String toString() {
-//        return CName;
-        return CName + ":" + position + " " + lifeState;
+        return CName;
+//        return CName + ":" + position + " " + lifeState;
     }
 
     public Image getImage(){
@@ -236,7 +236,8 @@ public class Creature implements Runnable, Serializable {
                 TimeUnit.MILLISECONDS.sleep(1000);
             }
             if (!isLive()){
-                TimeUnit.MILLISECONDS.sleep(100);
+//                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(500);
                 leave(field);
             }
         } catch (InterruptedException e) {

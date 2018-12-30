@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.canvas.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -7,10 +8,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="mainPane" prefHeight="750.0" prefWidth="1000.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainController">
+<AnchorPane fx:id="mainPane" prefHeight="750.0" prefWidth="1100.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainController">
    <children>
       <Group fx:id="mainGroup">
          <children>
+            <Rectangle fx:id="rectangle" arcHeight="5.0" arcWidth="5.0" fill="#b3d6f56a" focusTraversable="" height="770.0" layoutX="900.0" stroke="TRANSPARENT" strokeType="INSIDE" width="220.0" />
+            <Button fx:id="btnLastForm" layoutX="931.0" layoutY="115.0" mnemonicParsing="false" onMouseClicked="#onLastForm" prefHeight="43.0" prefWidth="153.0" text="上一阵型 (←↑)" />
+            <Button fx:id="btnNextForm" layoutX="931.0" layoutY="230.0" mnemonicParsing="false" onMouseClicked="#onNextForm" prefHeight="43.0" prefWidth="153.0" text="下一阵型 (→↓)" />
+            <Button fx:id="btnBattleBegin" layoutX="931.0" layoutY="343.0" mnemonicParsing="false" onMouseClicked="#onBattleBegin" prefHeight="43.0" prefWidth="153.0" text="战斗开始 (空格)" />
+            <Button fx:id="btnLoadRecord" layoutX="931.0" layoutY="456.0" mnemonicParsing="false" onMouseClicked="#onLoadRecord" prefHeight="43.0" prefWidth="153.0" text="记录加载 (L)" />
+            <Button fx:id="btnBattleReplay" layoutX="931.0" layoutY="571.0" mnemonicParsing="false" onMouseClicked="#onBattleReplay" prefHeight="43.0" prefWidth="153.0" text="战斗回放 (P)" />
             <Canvas fx:id="mainCanvas" height="750.0" width="1000.0" />
          </children>
       </Group>
