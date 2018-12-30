@@ -1,5 +1,7 @@
 # 史诗巨制悬疑历史动作大片——Battle
 
+![](src/main/resources/CalabashBattle.png)
+
 -----------------------------------------
 ## 一、 剧情台本
 
@@ -22,8 +24,8 @@
 	class Creature {
 		String CName;
 		private Factions factions;
-    	private final LifeState lifeState;
-    	private final Position position;
+		private final LifeState lifeState;
+		private final Position position;
 		char sign;
 		private Image image;
 		...
@@ -128,7 +130,7 @@
 要批量生产，还需要一个能够实现流水生产的生成器：
 ```java
 	class Generators {
-    	static <T> void fill(Collection<T> clt, Generator<T> gen, int num){...}
+		static <T> void fill(Collection<T> clt, Generator<T> gen, int num){...}
 	}
 ```
 
@@ -161,7 +163,7 @@
 ```java
 	public class UIUpdater{
 		private GraphicsContext gc;
-    	private Timeline timeline;
+		private Timeline timeline;
 		private static Map<Character, Image> imageMap = new HashMap<>();
 		...
 	}
@@ -171,12 +173,13 @@
 - - - - - - - - - - - - - - -
 ### 7. 精彩好戏，不容错过——场记走起！
 
--哎呀，我昨晚又错过葫芦娃妖精大戏的直播啦！
+-哎呀，我昨晚又错过葫芦娃妖精大戏的直播啦！  
 -你没看通告吗？现在有重播啦——
 
 剧组通告：
-为回馈广大人民群众对本剧的热爱与支持，本剧组耗巨资购入记录与回放设备，每周五晚定时重播，请各位准备好板凳与瓜子。
+为回馈广大人民群众对本剧的热爱与支持，本剧组耗巨资购入记录与回放设备，每周五晚定时重播，请各位准备好板凳与瓜子。  
 葫芦娃大战妖怪剧组
+
 设备展示台：
 ```java
 	public class BattleRecorder {
@@ -231,14 +234,14 @@ public class Main extends Application{...}
 	}
 ```
 
-对于踏上某块砖，可表示为：
-	- 将这块砖的位置记录在自己的位置信息中
-	- 将这块砖打上自己的标记
+对于踏上某块砖，可表示为：  
+	- 将这块砖的位置记录在自己的位置信息中  
+	- 将这块砖打上自己的标记  
 	- 将这块砖与自己建立联系（砖中的holder引用指向自己）
 	
-而对于离开某块砖，则可表示为：
-	- 修改自己的位置信息
-	- 擦除这块砖上自己的标记，修改为无人标记
+而对于离开某块砖，则可表示为：  
+	- 修改自己的位置信息  
+	- 擦除这块砖上自己的标记，修改为无人标记  
 	- 擦除这块砖与自己的联系（砖中的holder引用置空）
 	
 - - - - - - - - - - - - - - -
@@ -272,21 +275,22 @@ JumpOntoField具体实现时，还是按照阵型的映射，一个一个依次 
 	public void run() {...}
 ```
 
-战场上葫芦娃们和妖怪们到底要干嘛？run方法可以说是他们的《战场行为准则》，简称《关于葫芦娃妖怪大战的十五项规定与八大原则》（大误）。具体而言，他们需要做的有：
-	- 当我活着，当我面前还有敌人（深情朗诵语气）：
-		- 有目标敌人吗？还活着吗？没有？去找啊——
+战场上葫芦娃们和妖怪们到底要干嘛？run方法可以说是他们的《战场行为准则》，简称《关于葫芦娃妖怪大战的十五项规定与八大原则》（大误）。具体而言，他们需要做的有：  
+- 当我活着，当我面前还有敌人（深情朗诵语气）：  
+	- 有目标敌人吗？还活着吗？没有？去找啊——
 ```java
 	tgEnemy = searchForEnemy(enemyList);
 ```
-		- 确定敌人，大步向敌人迈去——
+	- 确定敌人，大步向敌人迈去——
+		
 ```java
 	stepForward(tgEnemy);
 ```
-		- 前行时检查周边八连通的区域，若有敌人？开打！
+	- 前行时检查周边八连通的区域，若有敌人？开打！
 ```java
 	checkAndAttack();
 ```
-	- 自己挂了咋办？躺一会儿尸再上天吧——
+- 自己挂了咋办？躺一会儿尸再上天吧——
 ```java
 	TimeUnit.MILLISECONDS.sleep(500);
 	leave(field);
@@ -326,9 +330,9 @@ JumpOntoField具体实现时，还是按照阵型的映射，一个一个依次 
 		...
 	}
 ```
-在将舞台大小等参数传给uiUpdater初始化后——
-总控台：“**uiUpdater！大兄弟！醒醒！有活干了！**”
-总控台：“**mainScene，你给我瞅着点啊，别把键盘按下事件放跑啦！**”
+在将舞台大小等参数传给uiUpdater初始化后——  
+总控台：“**uiUpdater！大兄弟！醒醒！有活干了！**”  
+总控台：“**mainScene，你给我瞅着点啊，别把键盘按下事件放跑啦！**”  
 
 另外，背景、按钮等布景、控件由MainController对应的MainWindow.FXML文件中读取。
 
@@ -340,7 +344,7 @@ JumpOntoField具体实现时，还是按照阵型的映射，一个一个依次 
 ```java
 	gc.drawImage(image, startPtX + imageSz * c, startPtY + imageSz * r, imageSz, imageSz);
 ```
-如果他挂了，再为他盖上一块灰纱**（为死亡蒙上一层阴影……）**:
+如果他挂了，再为他盖上一块灰纱（**为死亡蒙上一层阴影……**）:
 ```java
 	gc.fillRect(startPtX + imageSz * c, startPtY + imageSz * r, imageSz, imageSz);
 ```
@@ -359,8 +363,8 @@ JumpOntoField具体实现时，还是按照阵型的映射，一个一个依次 
 		...
     }
 ```
-总控台创建BattleRecorder并告知其开始记录，并通知战斗开打。
-在BattleRecorder中通过新建```java DataOutputStream```进行输出，获取战场信息并记录。
+总控台创建BattleRecorder并告知其开始记录，并通知战斗开打。  
+在BattleRecorder中通过新建```java DataOutputStream```进行输出，获取战场信息并记录。  
 而在Battle的```java public void battleBegin();```方法中，则通过新建线程池，并execute每个活着的生物，大家便可以跑起来啦！
 
 - - - - - - - - - - - - - - -
