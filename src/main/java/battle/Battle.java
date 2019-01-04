@@ -28,8 +28,8 @@ public class Battle {
         field = new BattleField(fieldRowNum, fieldColNum);
         cbqueue = new CBQueue();
         vlQueue = new VillainQueue(20); // with the first one as "蝎子精
-        grandpa = new Creature("爷爷", Factions.JUSTICE, 't', "./pic/grandpa.jpg");
-        snake = new Creature("蛇精", Factions.EVIL, 's', "./pic/snake.jpg");
+        grandpa = new Creature("爷爷", Factions.JUSTICE, 't', "pic/grandpa.jpg");
+        snake = new Creature("蛇精", Factions.EVIL, 's', "pic/snake.jpg");
         creatures = new ArrayList<>();
         creatures.add(grandpa);
         creatures.addAll(cbqueue.getBroQueue());

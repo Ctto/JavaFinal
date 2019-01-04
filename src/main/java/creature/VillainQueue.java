@@ -9,7 +9,7 @@ import java.util.List;
 class UnderlingsGenerator implements Generator<Creature> {
     private static int count = 0;
     public Creature next()  {
-        return new Creature("小喽啰"+(++count), Factions.EVIL, 'v', "./pic/bat.jpg");
+        return new Creature("小喽啰"+(++count), Factions.EVIL, 'v', "pic/bat.jpg");
     }
 }
 
@@ -19,7 +19,7 @@ public class VillainQueue implements CreatureQueueBehaviors {
 
     public VillainQueue(int n) {
         vlQueue = new ArrayList<>();
-        vlQueue.add(new Creature("蝎子精", Factions.EVIL, 'w', "./pic/scorpion.jpg"));
+        vlQueue.add(new Creature("蝎子精", Factions.EVIL, 'w', "pic/scorpion.jpg"));
 
         /*
         creature.Creature[] underlings = new creature.Creature[n-1];

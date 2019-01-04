@@ -4,7 +4,7 @@ import tools.Sorter;
 
 public class SorterTest {
 
-    @Test(timeout = 20)     // ?timeout = 20ms, with 31ms...Test passed?
+    @Test(timeout = 2000)     // ?timeout = 20ms, with 31ms...Test passed?
     public void testSortByName(){
 //    public void testSortByName() throws Exception{
         CBQueue cbQueue = new CBQueue();
@@ -18,7 +18,7 @@ public class SorterTest {
 //        Thread.sleep(100);
     }
 
-    @Test(timeout = 20)
+    @Test(timeout = 2000)
     public void testSortByColor() {
         CBQueue cbQueue = new CBQueue();
         cbQueue.randomQueue();

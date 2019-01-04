@@ -11,13 +11,13 @@ public class CBQueue implements CreatureQueueBehaviors {
 
     public CBQueue() {
         broQueue = new ArrayList<>();
-        broQueue.add(new CalabashBro("老大", Factions.JUSTICE, Color.RED, 1, 0, '1', "./pic/red.jpg"));
-        broQueue.add(new CalabashBro("老二", Factions.JUSTICE, Color.ORANGE, 2, 1, '2', "./pic/orange.jpg"));
-        broQueue.add(new CalabashBro("老三", Factions.JUSTICE, Color.YELLOW, 3, 2, '3', "./pic/yellow.jpg"));
-        broQueue.add(new CalabashBro("老四", Factions.JUSTICE, Color.GREEN, 4, 3, '4', "./pic/green.jpg"));
-        broQueue.add(new CalabashBro("老五", Factions.JUSTICE, Color.CYAN, 5, 4, '5', "./pic/cyan.jpg"));
-        broQueue.add(new CalabashBro("老六", Factions.JUSTICE, Color.BLUE, 6, 5, '6', "./pic/blue.jpg"));
-        broQueue.add(new CalabashBro("老七", Factions.JUSTICE, Color.VIOLET, 7, 6, '7', "./pic/violet.jpg"));
+        broQueue.add(new CalabashBro("老大", Factions.JUSTICE, Color.RED, 1, 0, '1', "pic/red.jpg"));
+        broQueue.add(new CalabashBro("老二", Factions.JUSTICE, Color.ORANGE, 2, 1, '2', "pic/orange.jpg"));
+        broQueue.add(new CalabashBro("老三", Factions.JUSTICE, Color.YELLOW, 3, 2, '3', "pic/yellow.jpg"));
+        broQueue.add(new CalabashBro("老四", Factions.JUSTICE, Color.GREEN, 4, 3, '4', "pic/green.jpg"));
+        broQueue.add(new CalabashBro("老五", Factions.JUSTICE, Color.CYAN, 5, 4, '5', "pic/cyan.jpg"));
+        broQueue.add(new CalabashBro("老六", Factions.JUSTICE, Color.BLUE, 6, 5, '6', "pic/blue.jpg"));
+        broQueue.add(new CalabashBro("老七", Factions.JUSTICE, Color.VIOLET, 7, 6, '7', "pic/violet.jpg"));
 
     }
 
